@@ -1,0 +1,4 @@
+CONFIGURATION.txt
+.vscode/
+__pycache__/
+*.pyc
