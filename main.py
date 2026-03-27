@@ -7,21 +7,16 @@ CONFIG_FILE = "CONFIGURATION.txt"
 API_URL = "https://api.openweathermap.org/data/2.5/weather"
 
 
-def load_api_key():
-    """Načte API klíč ze souboru CONFIGURATION.txt."""
+def load_config():
+    """Načte celý config ze souboru (JSON)."""
     if not os.path.exists(CONFIG_FILE):
         raise FileNotFoundError("Soubor CONFIGURATION.txt nebyl nalezen.")
 
     with open(CONFIG_FILE, "r", encoding="utf-8") as f:
-        for line in f:
-            if "API_KEY" in line:
-                return line.split("=")[1].strip()
-
-    raise ValueError("V souboru CONFIGURATION.txt nebyl nalezen API_KEY.")
+        return json.load(f)
 
 
 def get_weather(api_key, city):
-    """Získá aktuální počasí z OpenWeatherMap."""
     params = {
         "q": city,
         "appid": api_key,
@@ -42,7 +37,6 @@ def get_weather(api_key, city):
 
 
 def print_weather(data):
-    """Vytiskne počasí v přehledné podobě."""
     city = data["name"]
     temp = data["main"]["temp"]
     humidity = data["main"]["humidity"]
@@ -50,17 +44,20 @@ def print_weather(data):
     desc = data["weather"][0]["description"]
 
     print("\n==============================")
-    print(f"Lokalita: {city}")
-    print(f"Teplota: {temp} °C")
-    print(f"Vlhkost: {humidity} %")
-    print(f"Oblačnost: {clouds} %")
-    print(f"Popis: {desc}")
+    print(f"🌍 Lokalita: {city}")
+    print(f"🌡️ Teplota: {temp} °C")
+    print(f"💧 Vlhkost: {humidity} %")
+    print(f"☁️ Oblačnost: {clouds} %")
+    print(f"📌 Popis: {desc}")
     print("==============================\n")
 
 
 def main():
-    print("Načítám API klíč…")
-    api_key = load_api_key()
+    print("Načítám config…")
+    config = load_config()
+
+    # tady bereš z JSONu
+    api_key = config["api_key"]
 
     city = input("Zadej město: ")
 
@@ -71,8 +68,8 @@ def main():
         except Exception as e:
             print(f"❌ Chyba: {e}")
 
-        print("Čekám 1 sekundu kvůli limitu API…")
-        time.sleep(1)
+        print("Čekám 10 sekund…")
+        time.sleep(10)
 
 
 if __name__ == "__main__":
